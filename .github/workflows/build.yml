@@ -1,4 +1,4 @@
-name: Build Droper
+name: Build Droper C++
 
 on:
   push:
@@ -11,26 +11,24 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, macos-latest, ubuntu-latest]
-
     runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
+      - name: Setup compiler
+        if: matrix.os == 'windows-latest'
+        run: choco install mingw
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build app
-        run: npm run build
-
-      - name: Upload artifacts
+      - name: Build C++
+        run: |
+          g++ -o Droper *.cpp
+          
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: Droper-${{ matrix.os }}
-          path: dist/
+          path: Droper*
+
+
